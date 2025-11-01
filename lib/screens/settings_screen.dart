@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/services/storage_service.dart';
+import 'package:habit_tracker/services/notification_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,6 +11,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final StorageService _storageService = StorageService();
+  final NotificationService _notificationService = NotificationService();
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
 
@@ -38,12 +40,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: const Text('Notifications'),
               subtitle: const Text('Enable daily reminders'),
               value: _notificationsEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
+              onChanged: (value) async {
+                if (value) {
+                  final granted = await _notificationService.requestPermissions();
+                  if (granted) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                    });
+                    await _notificationService.scheduleDailyNotification(
+                      id: 0,
+                      title: 'Habit Reminder',
+                      body: 'Time to complete your daily habits!',
+                      hour: 9,
+                      minute: 0,
+                    );
+                  }
+                } else {
+                  setState(() {
+                    _notificationsEnabled = value;
+                  });
+                  await _notificationService.cancelAllNotifications();
+                }
               },
               secondary: const Icon(Icons.notifications),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: ListTile(
+              leading: const Icon(Icons.notification_add),
+              title: const Text('Test Notification'),
+              subtitle: const Text('Send a test notification'),
+              onTap: () async {
+                await _notificationService.showNotification(
+                  id: 999,
+                  title: 'Test Notification',
+                  body: 'This is a test notification from Habit Tracker!',
+                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Test notification sent!'),
+                    ),
+                  );
+                }
+              },
             ),
           ),
           Card(
