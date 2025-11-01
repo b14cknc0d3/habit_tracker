@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/screens/detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,7 +35,16 @@ class HomeScreen extends StatelessWidget {
               trailing: IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
                 onPressed: () {
-                  // TODO: Navigate to detail screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DetailScreen(
+                        habitName: 'Exercise',
+                        habitDescription: '30 minutes daily',
+                        habitIcon: Icons.fitness_center,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
@@ -48,7 +58,16 @@ class HomeScreen extends StatelessWidget {
               trailing: IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
                 onPressed: () {
-                  // TODO: Navigate to detail screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DetailScreen(
+                        habitName: 'Reading',
+                        habitDescription: '20 pages daily',
+                        habitIcon: Icons.book,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
@@ -62,7 +81,16 @@ class HomeScreen extends StatelessWidget {
               trailing: IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
                 onPressed: () {
-                  // TODO: Navigate to detail screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DetailScreen(
+                        habitName: 'Drink Water',
+                        habitDescription: '8 glasses daily',
+                        habitIcon: Icons.water_drop,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
