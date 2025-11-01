@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/services/storage_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final String habitName;
@@ -17,12 +18,51 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final StorageService _storageService = StorageService();
   bool isFavorite = false;
   int currentStreak = 0;
   List<bool> completionHistory = List.filled(7, false);
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final favorite = await _storageService.isFavorite(widget.habitName);
+    final progress = await _storageService.getHabitProgress(widget.habitName);
+
+    setState(() {
+      isFavorite = favorite;
+      if (progress != null) {
+        currentStreak = progress['streak'] ?? 0;
+        final historyList = progress['history'] as List?;
+        if (historyList != null) {
+          completionHistory = historyList.cast<bool>();
+        }
+      }
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _saveData() async {
+    await _storageService.saveHabitProgress(widget.habitName, {
+      'streak': currentStreak,
+      'history': completionHistory,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(widget.habitName)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.habitName),
@@ -32,10 +72,11 @@ class _DetailScreenState extends State<DetailScreen> {
               isFavorite ? Icons.favorite : Icons.favorite_border,
               color: isFavorite ? Colors.red : null,
             ),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 isFavorite = !isFavorite;
               });
+              await _storageService.saveFavorite(widget.habitName, isFavorite);
             },
           ),
         ],
@@ -92,11 +133,12 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 8),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         setState(() {
                           completionHistory[index] = !completionHistory[index];
                           currentStreak = _calculateStreak();
                         });
+                        await _saveData();
                       },
                       child: Container(
                         width: 40,
@@ -120,12 +162,13 @@ class _DetailScreenState extends State<DetailScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     int today = DateTime.now().weekday - 1;
                     completionHistory[today] = true;
                     currentStreak = _calculateStreak();
                   });
+                  await _saveData();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Habit marked as complete for today!'),
