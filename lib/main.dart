@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/screens/home_screen.dart';
+import 'package:habit_tracker/screens/auth/login_screen.dart';
 import 'package:habit_tracker/services/notification_service.dart';
 
 void main() async {
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(),
+      // Change to LoginScreen for screenshot flow, or HomeScreen to skip auth
+      home: const LoginScreen(), // Toggle between LoginScreen and HomeScreen
     );
   }
 }

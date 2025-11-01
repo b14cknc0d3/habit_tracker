@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/screens/auth/signup_screen.dart';
+import 'package:habit_tracker/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,9 +16,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      // For now, just print the data
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      // Simulate login error for wrong password
+      if (_passwordController.text == 'wrong') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: Invalid email or password!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Navigate to home screen on success
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
     }
   }
 

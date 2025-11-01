@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/screens/auth/login_screen.dart';
+import 'package:habit_tracker/screens/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -16,10 +17,23 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _signup() {
     if (_formKey.currentState!.validate()) {
-      // For now, just print the data
-      print('Username: ${_usernameController.text}');
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      // Simulate signup error for duplicate email
+      if (_emailController.text == 'test@test.com') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: Email already exists!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Navigate to home screen on success
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
     }
   }
 
