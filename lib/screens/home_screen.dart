@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/screens/detail_screen.dart';
+import 'package:habit_tracker/screens/quotes_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,6 +28,33 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          Card(
+            color: Colors.blue.shade50,
+            child: ListTile(
+              leading: const Icon(Icons.format_quote, size: 40, color: Colors.blue),
+              title: const Text('Motivational Quotes'),
+              subtitle: const Text('Get inspired daily'),
+              trailing: IconButton(
+                icon: const Icon(Icons.arrow_forward_ios),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QuotesScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'My Habits',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
           Card(
             child: ListTile(
               leading: const Icon(Icons.fitness_center, size: 40),
